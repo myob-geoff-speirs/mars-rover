@@ -5,12 +5,13 @@ namespace MarsRover
 {
     public class MarsRover
     {
-        public static Rover Process(int startX, int startY, Direction startDirection, char[] commands, int wrapDistance = 10, Obstacle[] obstacles = null){
+        public static Rover Process(int startX, int startY, Direction startDirection, char[] charCommands, int wrapDistance = 10, Obstacle[] obstacles = null){
+            Command[] commands = CommandValidator.Validate(charCommands);
             var rover = new Rover(startX, startY, startDirection);
             return ProcessCommands(rover, commands, wrapDistance, obstacles);
         }
 
-        private static Rover ProcessCommands(Rover startingRover, char[] commands, int wrapDistance, Obstacle[] obstacles){
+        private static Rover ProcessCommands(Rover startingRover, Command[] commands, int wrapDistance, Obstacle[] obstacles){
             return commands.Aggregate(startingRover, (prevRover, currCommand) => {
                 var nextRover = ProcessCommand(prevRover, currCommand, wrapDistance);
 
@@ -21,23 +22,23 @@ namespace MarsRover
             });
         }
 
-        private static Rover ProcessCommand(Rover rover, char command, int wrapDistance){
+        private static Rover ProcessCommand(Rover rover, Command command, int wrapDistance){
             return command switch {
-                var c when c == 'f' || c == 'b' => MoveRover(rover, command, wrapDistance),
-                var c when c == 'l' || c == 'r' => RotateRover(rover, command),
+                var c when c == Command.MoveForward || c == Command.MoveBackward => MoveRover(rover, command, wrapDistance),
+                var c when c == Command.TurnLeft || c == Command.TurnRight => RotateRover(rover, command),
                 _ => throw new ArgumentException($"Unhandled Command: {command}")
             };
         }
 
-        private static Rover MoveRover(Rover rover, char command, int wrapDistance){
+        private static Rover MoveRover(Rover rover, Command command, int wrapDistance){
             var distance = distanceForCommand(command);
             var desiredRover = rover.MoveDistance(distance);
             return WrapRover(rover, desiredRover, wrapDistance);
         }
-        private static int distanceForCommand(char command){
+        private static int distanceForCommand(Command command){
             return command switch {
-                'f' => 1,
-                'b' => -1,
+                Command.MoveForward => 1,
+                Command.MoveBackward => -1,
                 _ => throw new ArgumentException($"Unhandled Movement Command: {command}")
             };
         }
@@ -50,10 +51,10 @@ namespace MarsRover
             };
         }
 
-        private static Rover RotateRover(Rover rover, char command){
+        private static Rover RotateRover(Rover rover, Command command){
             return command switch {
-                'l' => rover.RotateLeft(),
-                'r' => rover.RotateRight(),
+                Command.TurnLeft => rover.RotateLeft(),
+                Command.TurnRight => rover.RotateRight(),
                 _ => throw new ArgumentException($"Unhandled Rotation Command: {command}")
             };
         }
