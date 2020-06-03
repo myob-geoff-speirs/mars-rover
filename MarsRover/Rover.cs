@@ -35,5 +35,14 @@ namespace MarsRover
             };
             return new Rover(x, y, newDirection);
         }
+        public Rover MoveDistance(int distance){
+            return direction switch {
+                Direction.North => new Rover(x, y + distance, direction),
+                Direction.South => new Rover(x, y - distance, direction),
+                Direction.East => new Rover(x + distance, y, direction),
+                Direction.West => new Rover(x - distance, y, direction),
+                _ => throw new ArgumentException($"Unhandled Direction: {direction}")
+            };
+        }
     }
 }

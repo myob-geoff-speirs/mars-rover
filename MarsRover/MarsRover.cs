@@ -31,7 +31,7 @@ namespace MarsRover
 
         private static Rover MoveRover(Rover rover, char command, int wrapDistance){
             var distance = distanceForCommand(command);
-            return MoveRoverDistance(rover, distance, wrapDistance);
+            return MoveRoverWithWrap(rover, distance, wrapDistance);
         }
         private static int distanceForCommand(char command){
             return command switch {
@@ -41,8 +41,8 @@ namespace MarsRover
             };
         }
 
-        private static Rover MoveRoverDistance(Rover rover, int distance, int wrapDistance){
-            var desiredRover = MoveRoverDistance(rover, distance);
+        private static Rover MoveRoverWithWrap(Rover rover, int distance, int wrapDistance){
+            var desiredRover = rover.MoveDistance(distance);
 
             return desiredRover switch {
                 var r when Math.Abs(r.x) > wrapDistance => new Rover(rover.x * -1, rover.y, rover.direction),
@@ -50,16 +50,6 @@ namespace MarsRover
                 _ => desiredRover
             };
         }
-        private static Rover MoveRoverDistance(Rover rover, int distance){
-            return rover.direction switch {
-                Direction.North => new Rover(rover.x, rover.y + distance, rover.direction),
-                Direction.South => new Rover(rover.x, rover.y - distance, rover.direction),
-                Direction.East => new Rover(rover.x + distance, rover.y, rover.direction),
-                Direction.West => new Rover(rover.x - distance, rover.y, rover.direction),
-                _ => throw new ArgumentException($"Unhandled Direction: {rover.direction}")
-            };
-        }
-
         private static Rover RotateRover(Rover rover, char command){
             return command switch {
                 'l' => rover.RotateLeft(),
