@@ -39,5 +39,33 @@ namespace MarsRover.Tests
             Rover expectedRover = new Rover(0, -2, Direction.North);
             AssertRoversEqual(expectedRover, rover);
         }
+
+        [Theory]
+        [InlineData(Direction.North, 'l', Direction.West)]
+        [InlineData(Direction.West, 'l', Direction.South)]
+        [InlineData(Direction.South, 'l', Direction.East)]
+        [InlineData(Direction.East, 'l', Direction.North)]
+        [InlineData(Direction.North, 'r', Direction.East)]
+        [InlineData(Direction.East, 'r', Direction.South)]
+        [InlineData(Direction.South, 'r', Direction.West)]
+        [InlineData(Direction.West, 'r', Direction.North)]
+        public void RotateRover(Direction startDirection, char command, Direction expectedDirection){        
+            Rover rover = MarsRover.Process(0, 0, startDirection, new []{command});
+            
+            Rover expectedRover = new Rover(0, 0, expectedDirection);
+            AssertRoversEqual(expectedRover, rover);
+        }
+
+        [Theory]
+        [InlineData(Direction.North, 0, 3, Direction.North, 0, -3)]
+        [InlineData(Direction.South, 0, -3, Direction.South, 0, 3)]
+        [InlineData(Direction.East, 3, 0, Direction.East, -3, 0)]
+        [InlineData(Direction.West, -3, 0, Direction.West, 3, 0)]
+        public void WrapRoverMovement(Direction startDirection, int startX, int startY, Direction expectedDirection, int expectedX, int expectedY){        
+            Rover rover = MarsRover.Process(startX, startY, startDirection, new []{'f'}, 3);
+            
+            Rover expectedRover = new Rover(expectedX, expectedY, expectedDirection);
+            AssertRoversEqual(expectedRover, rover);
+        }
     }
 }
