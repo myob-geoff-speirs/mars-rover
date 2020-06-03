@@ -31,7 +31,8 @@ namespace MarsRover
 
         private static Rover MoveRover(Rover rover, char command, int wrapDistance){
             var distance = distanceForCommand(command);
-            return MoveRoverWithWrap(rover, distance, wrapDistance);
+            var desiredRover = rover.MoveDistance(distance);
+            return WrapRover(rover, desiredRover, wrapDistance);
         }
         private static int distanceForCommand(char command){
             return command switch {
@@ -41,15 +42,14 @@ namespace MarsRover
             };
         }
 
-        private static Rover MoveRoverWithWrap(Rover rover, int distance, int wrapDistance){
-            var desiredRover = rover.MoveDistance(distance);
-
+        private static Rover WrapRover(Rover rover, Rover desiredRover, int wrapDistance){
             return desiredRover switch {
                 var r when Math.Abs(r.x) > wrapDistance => new Rover(rover.x * -1, rover.y, rover.direction),
                 var r when Math.Abs(r.y) > wrapDistance => new Rover(rover.x, rover.y * -1, rover.direction),
                 _ => desiredRover
             };
         }
+
         private static Rover RotateRover(Rover rover, char command){
             return command switch {
                 'l' => rover.RotateLeft(),
