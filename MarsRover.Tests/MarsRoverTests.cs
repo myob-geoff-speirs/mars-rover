@@ -75,5 +75,21 @@ namespace MarsRover.Tests
         public void FailsValidationForInvalidCharCommand(){
             Assert.Throws<ArgumentException>(() => MarsRover.Process(0, 0, Direction.North, new []{'q'}));
         }
+
+        [Fact]
+        public void ProcessesExtendedCommandSequenceWithWrap(){
+            Rover rover = MarsRover.Process(0, 0, Direction.North, new []{'f', 'f', 'f', 'r', 'f', 'f', 'f', 'r', 'b'}, 3);
+
+            Rover expectedRover = new Rover(3, -3, Direction.South, false);
+            MarsRoverAsserts.AssertRoversEqual(expectedRover, rover);
+        }
+
+        [Fact]
+        public void ProcessesExtendedCommandSequenceWithCrash(){
+            Rover rover = MarsRover.Process(0, 0, Direction.North, new []{'f', 'f', 'f', 'l', 'f', 'f', 'f', 'r', 'b', 'b', 'b',}, 10, new []{new Obstacle(-3,0), new Obstacle(2,2)});
+
+            Rover expectedRover = new Rover(-3, 1, Direction.North, true);
+            MarsRoverAsserts.AssertRoversEqual(expectedRover, rover);
+        }
     }
 }
