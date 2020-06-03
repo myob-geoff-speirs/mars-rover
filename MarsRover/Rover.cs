@@ -6,13 +6,14 @@ namespace MarsRover
     {
         public int x {get;}
         public int y {get;}
-        
         public Direction direction {get;}
+        public bool crashed {get;}
 
-        public Rover(int x = 0 , int y = 0, Direction direction = Direction.North){
+        public Rover(int x = 0 , int y = 0, Direction direction = Direction.North, bool crashed = false){
           this.x = x;
           this.y = y;
           this.direction = direction;
+          this.crashed = crashed;
         }
     }
 }

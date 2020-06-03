@@ -5,10 +5,21 @@ namespace MarsRover
 {
     public class MarsRover
     {
-        public static Rover Process(int startX, int startY, Direction startDirection, char[] commands, int wrapDistance = 10){
+        public static Rover Process(int startX, int startY, Direction startDirection, char[] commands, int wrapDistance = 10, Obstacle[] obstacles = null){
             var rover = new Rover(startX, startY, startDirection);
-            return commands.Aggregate(rover, (prevRover, currCommand) => ProcessCommand(prevRover, currCommand, wrapDistance));
+            return ProcessCommands(rover, commands, wrapDistance, obstacles);
         }
+
+        private static Rover ProcessCommands(Rover rover, char[] commands, int wrapDistance, Obstacle[] obstacles){
+            return commands.Aggregate(rover, (prevRover, currCommand) => {
+                var desiredRover = ProcessCommand(prevRover, currCommand, wrapDistance);
+
+                if (obstacles != null && obstacles.Any(obstacle => obstacle.x == desiredRover.x && obstacle.y == desiredRover.y))
+                    return new Rover(prevRover.x, prevRover.y, prevRover.direction, true);
+
+                return desiredRover;
+            });
+        }        
 
         private static Rover ProcessCommand(Rover rover, char command, int wrapDistance){
             return command switch {
