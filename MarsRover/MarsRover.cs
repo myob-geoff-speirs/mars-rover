@@ -42,13 +42,7 @@ namespace MarsRover
         }
 
         private static Rover MoveRoverDistance(Rover rover, int distance, int wrapDistance){
-            var desiredRover = rover.direction switch {
-                Direction.North => new Rover(rover.x, rover.y + distance, rover.direction),
-                Direction.South => new Rover(rover.x, rover.y - distance, rover.direction),
-                Direction.East => new Rover(rover.x + distance, rover.y, rover.direction),
-                Direction.West => new Rover(rover.x - distance, rover.y, rover.direction),
-                _ => throw new ArgumentException($"Unhandled Direction: {rover.direction}")
-            };
+            var desiredRover = MoveRoverDistance(rover, distance);
 
             return desiredRover switch {
                 var r when Math.Abs(r.x) > wrapDistance => new Rover(rover.x * -1, rover.y, rover.direction),
@@ -56,32 +50,22 @@ namespace MarsRover
                 _ => desiredRover
             };
         }
+        private static Rover MoveRoverDistance(Rover rover, int distance){
+            return rover.direction switch {
+                Direction.North => new Rover(rover.x, rover.y + distance, rover.direction),
+                Direction.South => new Rover(rover.x, rover.y - distance, rover.direction),
+                Direction.East => new Rover(rover.x + distance, rover.y, rover.direction),
+                Direction.West => new Rover(rover.x - distance, rover.y, rover.direction),
+                _ => throw new ArgumentException($"Unhandled Direction: {rover.direction}")
+            };
+        }
+
         private static Rover RotateRover(Rover rover, char command){
             return command switch {
-                'l' => RodateRoverLeft(rover),
-                'r' => RotateRoverRight(rover),
+                'l' => rover.RotateLeft(),
+                'r' => rover.RotateRight(),
                 _ => throw new ArgumentException($"Unhandled Rotation Command: {command}")
             };
-        }
-        private static Rover RodateRoverLeft(Rover rover){
-            var newDirection =  rover.direction switch {
-                Direction.North => Direction.West,
-                Direction.West => Direction.South,
-                Direction.South => Direction.East,
-                Direction.East => Direction.North,
-                _ => throw new ArgumentException($"Unhandled Direction: {rover.direction}")
-            };
-            return new Rover(rover.x, rover.y, newDirection);
-        }
-        private static Rover RotateRoverRight(Rover rover){
-            var newDirection =  rover.direction switch {
-                Direction.North => Direction.East,
-                Direction.East => Direction.South,
-                Direction.South => Direction.West,
-                Direction.West => Direction.North,
-                _ => throw new ArgumentException($"Unhandled Direction: {rover.direction}")
-            };
-            return new Rover(rover.x, rover.y, newDirection);
         }
         private static bool RoverWillCrash(Rover nextRover, Obstacle[] obstacles){
             if (obstacles == null) return false;
