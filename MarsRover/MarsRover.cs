@@ -10,16 +10,16 @@ namespace MarsRover
             return ProcessCommands(rover, commands, wrapDistance, obstacles);
         }
 
-        private static Rover ProcessCommands(Rover rover, char[] commands, int wrapDistance, Obstacle[] obstacles){
-            return commands.Aggregate(rover, (prevRover, currCommand) => {
-                var desiredRover = ProcessCommand(prevRover, currCommand, wrapDistance);
+        private static Rover ProcessCommands(Rover startingRover, char[] commands, int wrapDistance, Obstacle[] obstacles){
+            return commands.Aggregate(startingRover, (prevRover, currCommand) => {
+                var nextRover = ProcessCommand(prevRover, currCommand, wrapDistance);
 
-                if (obstacles != null && obstacles.Any(obstacle => obstacle.x == desiredRover.x && obstacle.y == desiredRover.y))
+                if (RoverWillCrash(nextRover, obstacles))
                     return new Rover(prevRover.x, prevRover.y, prevRover.direction, true);
 
-                return desiredRover;
+                return nextRover;
             });
-        }        
+        }
 
         private static Rover ProcessCommand(Rover rover, char command, int wrapDistance){
             return command switch {
@@ -82,6 +82,13 @@ namespace MarsRover
                 _ => throw new ArgumentException($"Unhandled Direction: {rover.direction}")
             };
             return new Rover(rover.x, rover.y, newDirection);
+        }
+        private static bool RoverWillCrash(Rover nextRover, Obstacle[] obstacles){
+            if (obstacles == null) return false;
+
+            return obstacles.Any(obstacle => 
+                obstacle.x == nextRover.x && 
+                obstacle.y == nextRover.y);
         }
     }
 }

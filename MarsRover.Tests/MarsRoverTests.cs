@@ -76,12 +76,5 @@ namespace MarsRover.Tests
             Rover expectedRover = new Rover(0, 0, Direction.North, true);
             AssertRoversEqual(expectedRover, rover);
         }
-        [InlineData(Direction.North, 0, 1, Direction.North, 0, 2)]
-        public void RoverReportsObstacle(){
-            Rover rover = MarsRover.Process(0, 0, Direction.North, new []{'f'}, 3, new []{new Obstacle(0,1)});
-
-            Rover expectedRover = new Rover(0, 0, Direction.North, true);
-            AssertRoversEqual(expectedRover, rover);
-        }
     }
 }
