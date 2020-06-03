@@ -10,19 +10,20 @@ namespace MarsRover
             return commands.Aggregate(rover, (prevRover, currCommand) => ProcessCommand(prevRover, currCommand));
         }
 
-        public static Rover ProcessCommand(Rover rover, char commands){
-            switch (rover.direction){
-                case Direction.North:
-                    return new Rover(rover.x, rover.y + 1, rover.direction);
-                case Direction.South:
-                    return new Rover(rover.x, rover.y - 1, rover.direction);
-                case Direction.East:
-                    return new Rover(rover.x + 1, rover.y, rover.direction);
-                case Direction.West:
-                    return new Rover(rover.x - 1, rover.y, rover.direction);
-                default:
-                    throw new ArgumentException($"Unhandled Direction: {rover.direction}");
-            }
+        private static Rover ProcessCommand(Rover rover, char command){
+            var moveDistance = command switch {
+                'f' => 1,
+                'b' => -1,
+                _ => throw new ArgumentException($"Unhandled Command: {command}")
+            };
+
+            return rover.direction switch {
+                Direction.North => new Rover(rover.x, rover.y + moveDistance, rover.direction),
+                Direction.South => new Rover(rover.x, rover.y - moveDistance, rover.direction),
+                Direction.East => new Rover(rover.x + moveDistance, rover.y, rover.direction),
+                Direction.West => new Rover(rover.x - moveDistance, rover.y, rover.direction),
+                _ => throw new ArgumentException($"Unhandled Direction: {rover.direction}")
+            };
         }
     }
 }
