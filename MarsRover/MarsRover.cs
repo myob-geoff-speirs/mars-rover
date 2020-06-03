@@ -11,17 +11,24 @@ namespace MarsRover
         }
 
         private static Rover ProcessCommand(Rover rover, char command){
-            var moveDistance = command switch {
+            var distance = distanceForCommand(command);
+            return moveRover(rover, distance);
+        }
+
+        private static int distanceForCommand(char command){
+            return command switch {
                 'f' => 1,
                 'b' => -1,
                 _ => throw new ArgumentException($"Unhandled Command: {command}")
             };
+        }
 
+        private static Rover moveRover(Rover rover, int distance){
             return rover.direction switch {
-                Direction.North => new Rover(rover.x, rover.y + moveDistance, rover.direction),
-                Direction.South => new Rover(rover.x, rover.y - moveDistance, rover.direction),
-                Direction.East => new Rover(rover.x + moveDistance, rover.y, rover.direction),
-                Direction.West => new Rover(rover.x - moveDistance, rover.y, rover.direction),
+                Direction.North => new Rover(rover.x, rover.y + distance, rover.direction),
+                Direction.South => new Rover(rover.x, rover.y - distance, rover.direction),
+                Direction.East => new Rover(rover.x + distance, rover.y, rover.direction),
+                Direction.West => new Rover(rover.x - distance, rover.y, rover.direction),
                 _ => throw new ArgumentException($"Unhandled Direction: {rover.direction}")
             };
         }
